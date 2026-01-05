@@ -1,0 +1,34 @@
+---
+name: dev-memory
+version: 1.0.0
+description: Local development partner memory system for persistent context across sessions
+author: ramparte
+license: MIT
+
+# Auto-load this collection so memory is always available
+auto_load: true
+
+# Agents
+agents:
+  - memory-partner
+
+# Context files loaded into every session
+context:
+  - context/memory-system-guide.md
+  - context/auto-context.md
+
+# Tools for memory management
+tools:
+  - remember
+  - recall
+  - work-status
+  - memory-guide
+
+# Memory store location (global, not project-specific)
+config:
+  memory_path: "${HOME}/.amplifier/dev-memory"
+  auto_load_context: true
+  
+# Dependencies
+requires:
+  amplifier: ">=0.1.0"
