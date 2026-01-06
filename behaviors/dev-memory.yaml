@@ -9,6 +9,7 @@ agents:
 
 context:
   include:
+    - dev-memory:context/DELEGATION-RULES.md
     - dev-memory:context/auto-context.md
     - dev-memory:context/memory-writer-instructions.md
     - dev-memory:context/memory-system-guide.md

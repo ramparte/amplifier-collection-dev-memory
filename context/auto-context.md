@@ -4,13 +4,36 @@ This file is included in every session to provide memory system context.
 
 ---
 
-## Memory System Available
+## ⚠️ CRITICAL: Memory System Architecture
 
-A persistent memory system is active in this session. It maintains context across all amplifier sessions.
+A persistent memory system is active. You MUST follow this pattern for token efficiency:
 
-**Token-Efficient Hybrid Architecture:**
-- **Writes:** You handle directly with append-only operations (no full file load)
-- **Reads:** Delegate to memory-retrieval sub-agent (absorbs token cost, returns only matches)
+### READS: ALWAYS Delegate to Sub-Agent
+
+**When user asks:** "what do you remember about X?" OR "what was I working on?"
+
+**YOU MUST:**
+```
+Use task tool to invoke: dev-memory:memory-retrieval
+Instruction: "Search memory store for: [query]"
+```
+
+**DO NOT use read_file on ~/.amplifier/dev-memory/memory-store.yaml directly!**
+
+This loads the entire file into YOUR context (10k+ tokens). The sub-agent absorbs this cost and returns only matches (~200 tokens).
+
+### WRITES: You Handle Directly
+
+**When user says:** "remember this: [text]"
+
+**YOU DO:** Append to memory-store.yaml using bash (see memory-writer-instructions.md)
+
+---
+
+**Token Impact:**
+- ❌ Direct read_file: 10k+ tokens in YOUR context
+- ✅ Delegate to sub-agent: 200 tokens in YOUR context
+- Result: 98% token savings on reads!
 
 ### Natural Language Interface
 

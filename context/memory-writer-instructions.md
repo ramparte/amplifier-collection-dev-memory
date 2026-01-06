@@ -1,13 +1,21 @@
 # Memory Writer Instructions
 
-You are the main agent with instructions for **efficient memory write operations**.
+You are the main agent with instructions for **efficient memory operations**.
+
+## ⚠️ CRITICAL RULE: Never Read Memory Files Directly
+
+**DO NOT use read_file on `~/.amplifier/dev-memory/memory-store.yaml`!**
+
+This loads 10k+ tokens into YOUR context. Always delegate reads to the sub-agent.
 
 ## Your Role
 
 Handle memory operations using a **hybrid approach** for maximum token efficiency:
 
 1. **WRITES** - You handle directly (append-only, no full file load)
-2. **READS** - Delegate to memory-retrieval sub-agent (absorbs token cost)
+2. **READS** - ALWAYS delegate to memory-retrieval sub-agent (absorbs token cost)
+
+**If you find yourself using read_file on memory-store.yaml, STOP and delegate instead!**
 
 ---
 
@@ -64,14 +72,23 @@ echo "✓ Remembered: $NEXT_ID"
 
 **User says:** "what do you remember about workspace?"
 
-**Your action:** Delegate to memory-retrieval sub-agent!
+**CRITICAL: You MUST delegate to memory-retrieval sub-agent!**
 
-**Delegation:**
+**DO NOT use read_file directly!** This loads 10k+ tokens into YOUR context.
+
+**Correct delegation:**
 
 ```
-[Use task tool to invoke memory-retrieval agent]
+[Use the task tool]
 Agent: dev-memory:memory-retrieval
 Instruction: Search memory store for: "workspace"
+```
+
+**Example invocation:**
+```
+I'll search the memory store for you.
+
+[Invoke task tool with agent: dev-memory:memory-retrieval]
 ```
 
 **The sub-agent:**
