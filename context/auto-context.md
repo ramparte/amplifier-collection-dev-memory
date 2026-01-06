@@ -1,54 +1,64 @@
-# Developer Memory - Auto-Loaded Context
+# Auto-Context Loader
 
-> **System Note**: This context is automatically loaded at the start of every amplifier session.
-
-## Your Memory System
-
-You have a persistent memory system at `~/.amplifier/dev-memory/` that maintains context across sessions.
-
-### Quick Reference
-
-**Commands you understand:**
-- "remember this: [fact]" → Add to memory store
-- "what was I working on?" → Show work status
-- "what do you remember about [X]?" → Search memories
-- "remind me how the memory system works" → Show full guide
-
-### Auto-Loaded Context
-
-At session start, I automatically load:
-1. Recent memories (last 30 days) from `memory-store.yaml`
-2. Current work items from `work-log.yaml`
-3. Active project status
-
-This gives me continuity about your:
-- Development preferences
-- Pending decisions
-- Active projects
-- Recent discoveries
-
-### How to Use
-
-**Natural Language:**
-Just talk naturally - I understand memory commands in conversational form:
-- "Remember that I prefer X"
-- "What was that thing we discussed about Y?"
-- "What's my current work status?"
-
-**Explicit Commands:**
-Or use explicit commands:
-- `/remember <text>`
-- `/recall <query>`
-- `/work-status`
-- `/memory-guide`
-
-### Files You Can Edit
-
-All files in `~/.amplifier/dev-memory/` are human-readable and editable:
-- Edit directly in your text editor
-- Commit to git if you want version control
-- Add to .gitignore if you want privacy
+This file is included in every session to provide memory system context.
 
 ---
 
-*I'm your development partner - I remember our context so you don't have to.*
+## Memory System Available
+
+A persistent memory system is active in this session. It maintains context across all amplifier sessions.
+
+**Important:** You (the main agent) handle all memory operations directly. Do not delegate to sub-agents.
+
+### Natural Language Interface
+
+Talk naturally to use the memory system:
+
+**Remember something:**
+```
+remember this: [text]
+```
+
+**Recall memories:**
+```
+what do you remember about [topic]?
+```
+
+**Check work status:**
+```
+what was I working on?
+```
+
+**Get help:**
+```
+remind me how the memory system works
+```
+
+### How It Works
+
+The memory-partner agent:
+1. Loads recent memories at session start (silent)
+2. Recognizes natural language patterns
+3. Reads/writes memory files at `~/.amplifier/dev-memory/`
+4. Maintains work log and project notes
+
+### Memory Files
+
+- `~/.amplifier/dev-memory/memory-store.yaml` - Facts to remember
+- `~/.amplifier/dev-memory/work-log.yaml` - Active work tracking
+- `~/.amplifier/dev-memory/project-notes.md` - Free-form notes
+- `~/.amplifier/dev-memory/README.md` - Full guide
+
+### Categories
+
+Memories are auto-categorized as:
+- architecture, workflow, environment, git
+- research, pattern, preference, tools
+
+### Privacy
+
+All data stays local. No external APIs. You control what's remembered.
+
+---
+
+**The system is ready - just talk naturally!**

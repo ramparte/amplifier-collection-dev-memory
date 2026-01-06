@@ -1,110 +1,97 @@
-# Quick Start - Memory System is Ready!
+# Quick Start Guide
 
-## ✅ Installation Complete
-
-The memory system is already installed and will work in **all** amplifier sessions!
-
-### What's Set Up
-
-1. **Collection installed**: `~/.amplifier/collections/dev-memory` ✓
-2. **Memory files ready**: `~/.amplifier/dev-memory/` ✓
-3. **Auto-load enabled**: Works in every session ✓
-
-## How to Use It
-
-### Start Any Amplifier Session
-
-```bash
-cd /any/project/directory
-amplifier
-```
-
-The memory system automatically loads! No setup needed per-project.
-
-### Use Memory Commands
-
-Just talk naturally - the system understands:
-
-**Remember something:**
-```
-You: remember this: I prefer clean workspaces with Inactive/ folders
-AI: ✓ Remembered: workspace organization preference
-```
-
-**Recall what you know:**
-```
-You: what do you remember about workspaces?
-AI: I remember:
-    1. Prefer clean workspaces with Inactive/ folders...
-```
-
-**Check work status:**
-```
-You: what was I working on?
-AI: Your current status:
-    Active Work: ...
-    Pending Decisions: ...
-```
-
-**Get help:**
-```
-You: remind me how the memory system works
-AI: [Shows full guide]
-```
-
-## Available Commands
-
-The system recognizes natural language:
-
-| What to say | What happens |
-|-------------|--------------|
-| "remember this: X" | Adds X to memory store |
-| "what do you remember about Y?" | Searches for Y in memories |
-| "what was I working on?" | Shows work log |
-| "remind me how the memory system works" | Shows full guide |
-| "update work log: completed X" | Updates work status |
-
-## Where Your Data Lives
-
-Everything is stored locally at:
-```
-~/.amplifier/dev-memory/
-├── memory-store.yaml      ← Your "remember this" entries
-├── work-log.yaml          ← Active work tracking
-├── project-notes.md       ← Free-form notes
-├── README.md              ← Documentation
-└── DESIGN.md              ← Architecture
-```
-
-**All files are human-readable and editable!**
-
-## Privacy
-
-- 100% local storage
-- No external APIs
-- No data leaves your machine
-- You control everything
-
-## Test It Now
-
-Try this in your next amplifier session:
-
-```bash
-amplifier
-
-# Then:
-You: remember this: testing the memory system works great!
-You: what do you remember about testing?
-```
-
-You should see your memory recalled!
-
-## For More Details
-
-- Full guide: Say "remind me how the memory system works"
-- Architecture: Read `~/.amplifier/dev-memory/DESIGN.md`
-- Collection info: Read `/mnt/c/ANext/amplifier-collection-dev-memory/README.md`
+Get started with the dev-memory bundle in 2 minutes.
 
 ---
 
-**You're all set! The memory system works in all amplifier sessions now.** 🎉
+## Install
+
+```bash
+amplifier bundle add git+https://github.com/ramparte/amplifier-collection-dev-memory@main
+amplifier bundle use dev-memory
+```
+
+That's it! The memory system is now active globally.
+
+---
+
+## Use It
+
+Just talk naturally! The AI recognizes these patterns:
+
+### Remember Something
+
+```
+remember this: I like keeping my workspace organized
+```
+
+### Recall Memories
+
+```
+what do you remember about workspace?
+```
+
+### Check Work Status
+
+```
+what was I working on?
+```
+
+### Get Help
+
+```
+remind me how the memory system works
+```
+
+---
+
+## Where Data Lives
+
+All memory files are at `~/.amplifier/dev-memory/`:
+
+- `memory-store.yaml` - Facts you've asked to remember
+- `work-log.yaml` - Active work and pending decisions
+- `project-notes.md` - Free-form notes
+
+All files are human-readable - you can edit them directly!
+
+---
+
+## Example Session
+
+```
+You: what was I working on?
+
+AI: Current Status:
+    Active Work:
+    - Project cleanup (completed)
+    
+    Pending Decisions:
+    - Database migration approach
+    
+You: remember this: prefer PostgreSQL for new projects
+
+AI: ✓ Remembered: database preference
+    Category: preference
+    Tags: postgresql, database, tools
+
+You: what do you remember about database?
+
+AI: I found 1 memory:
+    "prefer PostgreSQL for new projects"
+    Category: preference
+    Added: 2026-01-05
+```
+
+---
+
+## Tips
+
+1. **Be specific** - More context = better memory
+2. **Search broadly** - The AI searches content, tags, and context
+3. **Edit directly** - Memory files are yours to modify
+4. **Use naturally** - Just talk, don't overthink it
+
+---
+
+**Ready!** Start your next amplifier session and try it out.
