@@ -59,6 +59,22 @@ remind me how the memory system works
 
 The AI recognizes these conversational patterns automatically - no special commands needed!
 
+## Token Efficiency
+
+**Built for scale:** This system uses a hybrid architecture that keeps token usage constant regardless of memory store size!
+
+| Operation | 10 Memories | 1000 Memories | Savings |
+|-----------|-------------|---------------|---------|
+| Write | ~100 tokens | ~100 tokens | Constant ✅ |
+| Read | ~200 tokens | ~200 tokens | Constant ✅ |
+
+**How it works:**
+- **Writes:** Append-only operations (no full file load)
+- **Reads:** Sub-agent absorbs token cost, returns only matches
+- **Result:** Scale to 10,000+ memories without context bloat!
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for technical details.
+
 ### Files
 
 Memory is stored at `~/.amplifier/dev-memory/`:

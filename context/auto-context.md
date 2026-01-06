@@ -8,7 +8,9 @@ This file is included in every session to provide memory system context.
 
 A persistent memory system is active in this session. It maintains context across all amplifier sessions.
 
-**Important:** You (the main agent) handle all memory operations directly. Do not delegate to sub-agents.
+**Token-Efficient Hybrid Architecture:**
+- **Writes:** You handle directly with append-only operations (no full file load)
+- **Reads:** Delegate to memory-retrieval sub-agent (absorbs token cost, returns only matches)
 
 ### Natural Language Interface
 

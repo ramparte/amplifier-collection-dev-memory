@@ -3,8 +3,12 @@ bundle:
   version: 1.0.0
   description: Persistent memory system for maintaining development context across sessions
 
+agents:
+  include:
+    - dev-memory:memory-retrieval
+
 context:
   include:
     - dev-memory:context/auto-context.md
-    - dev-memory:context/memory-partner-instructions.md
+    - dev-memory:context/memory-writer-instructions.md
     - dev-memory:context/memory-system-guide.md
