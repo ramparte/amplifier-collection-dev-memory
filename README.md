@@ -33,33 +33,31 @@ cp -r amplifier-collection-dev-memory ~/.amplifier/collections/dev-memory
 
 ## Usage
 
-### Commands
+### Natural Language Interface
 
-All commands work naturally in conversation or as explicit commands:
+Talk naturally with the AI to use the memory system:
 
 **Remember something:**
 ```
 remember this: I prefer keeping workspaces clean
-/remember I prefer keeping workspaces clean
 ```
 
 **Recall memories:**
 ```
 what do you remember about workspace organization?
-/recall workspace organization
 ```
 
 **Check work status:**
 ```
 what was I working on?
-/work-status
 ```
 
 **Get help:**
 ```
 remind me how the memory system works
-/memory-guide
 ```
+
+The AI recognizes these conversational patterns automatically - no special commands needed!
 
 ### Files
 
