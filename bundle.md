@@ -1,23 +1,30 @@
-# Dev Memory Bundle
+---
+bundle:
+  name: dev-memory
+  version: 1.0.0
+  description: Persistent memory system for maintaining context across all amplifier sessions
 
-Persistent memory system for maintaining context across all amplifier sessions.
+includes:
+  - bundle: git+https://github.com/microsoft/amplifier-foundation@main
+  - bundle: dev-memory:behaviors/dev-memory
+---
 
-## What It Does
+# Developer Memory System
 
-Provides a global memory system that works in any directory:
-- Remember facts and preferences across sessions
-- Track active work and pending decisions
-- Maintain development context automatically
-- Natural language and slash command interface
+A persistent development partner that maintains context across all amplifier sessions.
 
-## Installation
+## What This Provides
 
-```bash
-amplifier bundle add git+https://github.com/ramparte/amplifier-collection-dev-memory@main
-amplifier bundle use dev-memory
-```
+The dev-memory bundle adds persistent memory capabilities to amplifier:
 
-## Usage
+- **Remember facts** - "remember this: [text]"
+- **Recall context** - "what do you remember about X?"
+- **Track work** - "what was I working on?"
+- **Maintain continuity** - Auto-loads recent context at session start
+
+## Memory Partner Agent
+
+The `memory-partner` agent handles all memory operations using slash commands and natural language.
 
 ### Slash Commands
 
@@ -31,49 +38,19 @@ amplifier bundle use dev-memory
 - "what do you remember about X?"
 - "remember this: [fact]"
 - "what was I working on?"
-- "remind me how the memory system works"
 
 ## Memory Storage
 
-All data stored locally at `~/.amplifier/dev-memory/`:
+All data is stored locally at `~/.amplifier/dev-memory/`:
+
 - `memory-store.yaml` - Facts to remember
 - `work-log.yaml` - Active work tracking
 - `project-notes.md` - Free-form notes
 
-## Features
+## Instructions
 
-- ✓ Works globally (any directory)
-- ✓ Auto-loads context at session start
-- ✓ Natural language recognition
-- ✓ Human-readable YAML files
-- ✓ 100% local storage (no external APIs)
-- ✓ Privacy-focused
+@dev-memory:context/memory-system-guide.md
 
-## Agent
+---
 
-`memory-partner` - Handles all memory operations
-
-## Context Files
-
-- `memory-system-guide.md` - User guide
-- `auto-context.md` - Session start context
-
-## Configuration
-
-```yaml
-config:
-  memory_path: "${HOME}/.amplifier/dev-memory"
-  auto_load_context: true
-```
-
-## License
-
-MIT
-
-## Author
-
-ramparte
-
-## Repository
-
-https://github.com/ramparte/amplifier-collection-dev-memory
+@foundation:context/shared/common-system-base.md

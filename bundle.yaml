@@ -1,4 +1,0 @@
-bundle:
-  name: dev-memory
-  version: 1.0.0
-  description: Persistent memory system for maintaining context across all amplifier sessions

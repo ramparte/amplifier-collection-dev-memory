@@ -1,0 +1,13 @@
+bundle:
+  name: dev-memory-behavior
+  version: 1.0.0
+  description: Persistent memory system for maintaining development context across sessions
+
+agents:
+  include:
+    - dev-memory:memory-partner
+
+context:
+  include:
+    - dev-memory:context/memory-system-guide.md
+    - dev-memory:context/auto-context.md
