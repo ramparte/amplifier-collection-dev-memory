@@ -2,20 +2,3 @@ bundle:
   name: dev-memory
   version: 1.0.0
   description: Persistent memory system for maintaining context across all amplifier sessions
-
-# Memory agent that handles memory commands
-agents:
-  - agent: memory-partner
-    source: ./agents/memory-partner.md
-
-# Context loaded at session start (provides instructions)
-context:
-  - path: ./context/memory-system-guide.md
-    description: Memory system user guide
-  - path: ./context/auto-context.md
-    description: Auto-loaded context explaining memory system
-
-# Configuration
-config:
-  memory_path: "${HOME}/.amplifier/dev-memory"
-  auto_load_context: true
