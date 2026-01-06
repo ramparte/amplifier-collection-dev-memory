@@ -13,23 +13,19 @@ Provides a local, persistent memory that helps you and your AI assistant maintai
 
 ## Installation
 
-### Option 1: Install as Collection (Recommended)
+Install from GitHub:
 
 ```bash
-cd ~/.amplifier/collections
-ln -s /mnt/c/ANext/amplifier-collection-dev-memory dev-memory
-amplifier collection reload
+amplifier bundle add git+https://github.com/ramparte/amplifier-collection-dev-memory@main
+amplifier bundle use dev-memory
 ```
 
-### Option 2: Manual Setup
+The bundle automatically:
+- Creates `~/.amplifier/dev-memory/` directory
+- Configures write permissions
+- Loads memory context in all sessions
 
-```bash
-# Copy to collections directory
-cp -r amplifier-collection-dev-memory ~/.amplifier/collections/dev-memory
-
-# Memory files are stored globally at:
-# ~/.amplifier/dev-memory/
-```
+No manual configuration needed!
 
 ## Usage
 

@@ -4,6 +4,10 @@ bundle:
   version: 1.0.0
   description: Persistent memory system for maintaining context across all amplifier sessions
 
+config:
+  allowed_write_dirs:
+    - ~/.amplifier/dev-memory
+
 includes:
   - bundle: git+https://github.com/microsoft/amplifier-foundation@main
   - bundle: dev-memory:behaviors/dev-memory
@@ -22,22 +26,20 @@ The dev-memory bundle adds persistent memory capabilities to amplifier:
 - **Track work** - "what was I working on?"
 - **Maintain continuity** - Auto-loads recent context at session start
 
-## Memory Partner Agent
+## Token-Efficient Architecture
 
-The `memory-partner` agent handles all memory operations using slash commands and natural language.
+**Hybrid approach for scalability:**
 
-### Slash Commands
+- **Writes:** Main agent appends to memory files (~100 tokens)
+- **Reads:** memory-retrieval sub-agent searches and returns only matches (~200 tokens)
+- **Result:** Constant token usage even with 1000+ memories!
 
-- `/memory-recall [query]` - Search memories
-- `/memory-remember [text]` - Add a memory
-- `/memory-status` - Show work log
-- `/memory-guide` - Show full guide
+### Natural Language Interface
 
-### Natural Language
-
-- "what do you remember about X?"
-- "remember this: [fact]"
-- "what was I working on?"
+- "what do you remember about X?" - Search memories
+- "remember this: [fact]" - Add a memory
+- "what was I working on?" - Show work status
+- "remind me how the memory system works" - Show guide
 
 ## Memory Storage
 
