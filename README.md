@@ -21,7 +21,7 @@ amplifier bundle use dev-memory
 ```
 
 The bundle automatically:
-- Creates `~/.amplifier/dev-memory/` directory
+- Creates `~/amplifier-dev-memory/` directory
 - Configures write permissions
 - Loads memory context in all sessions
 
@@ -73,7 +73,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for technical details.
 
 ### Files
 
-Memory is stored at `~/.amplifier/dev-memory/`:
+Memory is stored at `~/amplifier-dev-memory/`:
 
 - **memory-store.yaml** - Facts and learnings
 - **work-log.yaml** - Active work tracking
@@ -92,7 +92,7 @@ This collection is configured with `auto_load: true`, so:
 
 ## Privacy
 
-- All data stored locally at `~/.amplifier/dev-memory/`
+- All data stored locally at `~/amplifier-dev-memory/`
 - No external APIs
 - No data leaves your machine
 - You control what's remembered

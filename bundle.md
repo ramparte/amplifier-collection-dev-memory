@@ -6,7 +6,7 @@ bundle:
 
 config:
   allowed_write_dirs:
-    - ~/.amplifier/dev-memory
+    - ~/amplifier-dev-memory
 
 includes:
   - bundle: git+https://github.com/microsoft/amplifier-foundation@main
@@ -43,7 +43,7 @@ The dev-memory bundle adds persistent memory capabilities to amplifier:
 
 ## Memory Storage
 
-All data is stored locally at `~/.amplifier/dev-memory/`:
+All data is stored locally at `~/amplifier-dev-memory/`:
 
 - `memory-store.yaml` - Facts to remember
 - `work-log.yaml` - Active work tracking

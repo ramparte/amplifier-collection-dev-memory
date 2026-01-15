@@ -8,7 +8,7 @@ amplifier bundle use dev-memory
 ```
 
 That's it! The bundle will automatically:
-1. Configure write permissions for `~/.amplifier/dev-memory/`
+1. Configure write permissions for `~/amplifier-dev-memory/`
 2. Create the memory directory if it doesn't exist
 3. Load memory context in all sessions
 
@@ -19,7 +19,7 @@ That's it! The bundle will automatically:
 After installation, you'll have:
 
 ```
-~/.amplifier/dev-memory/
+~/amplifier-dev-memory/
 ├── memory-store.yaml      # Your memories (auto-created on first write)
 ├── work-log.yaml          # Work tracking (auto-created on first write)
 ├── project-notes.md       # Free-form notes (auto-created on first write)
@@ -53,12 +53,12 @@ You should see the memory stored and retrieved!
 
 ## Write Permissions
 
-The bundle automatically configures `~/.amplifier/dev-memory/` as an allowed write directory in the bundle configuration:
+The bundle automatically configures `~/amplifier-dev-memory/` as an allowed write directory in the bundle configuration:
 
 ```yaml
 config:
   allowed_write_dirs:
-    - ~/.amplifier/dev-memory
+    - ~/amplifier-dev-memory
 ```
 
 This allows the main agent to write memory files without permission errors.
@@ -79,22 +79,22 @@ If you want to initialize the directory manually:
 
 ```bash
 # Create directory
-mkdir -p ~/.amplifier/dev-memory
+mkdir -p ~/amplifier-dev-memory
 
 # Initialize empty memory store
-cat > ~/.amplifier/dev-memory/memory-store.yaml <<'EOF'
+cat > ~/amplifier-dev-memory/memory-store.yaml <<'EOF'
 memories: []
 EOF
 
 # Initialize work log
-cat > ~/.amplifier/dev-memory/work-log.yaml <<'EOF'
+cat > ~/amplifier-dev-memory/work-log.yaml <<'EOF'
 active_work: []
 pending_decisions: []
 completed_items: []
 EOF
 
 # Add notes file
-touch ~/.amplifier/dev-memory/project-notes.md
+touch ~/amplifier-dev-memory/project-notes.md
 ```
 
 But this is optional - files are auto-created when first used!
@@ -128,7 +128,7 @@ If you see write permission errors:
 1. **Check bundle configuration:**
    ```bash
    amplifier bundle show dev-memory
-   # Should show allowed_write_dirs: ~/.amplifier/dev-memory
+   # Should show allowed_write_dirs: ~/amplifier-dev-memory
    ```
 
 2. **Reinstall bundle:**
@@ -140,7 +140,7 @@ If you see write permission errors:
 
 3. **Verify directory exists:**
    ```bash
-   ls -la ~/.amplifier/dev-memory/
+   ls -la ~/amplifier-dev-memory/
    ```
 
 ### Sub-agent can't write
@@ -171,10 +171,10 @@ To remove the bundle:
 amplifier bundle remove dev-memory
 ```
 
-**Note:** This does NOT delete your memory files at `~/.amplifier/dev-memory/`. If you want to delete them:
+**Note:** This does NOT delete your memory files at `~/amplifier-dev-memory/`. If you want to delete them:
 
 ```bash
-rm -rf ~/.amplifier/dev-memory/
+rm -rf ~/amplifier-dev-memory/
 ```
 
 ---

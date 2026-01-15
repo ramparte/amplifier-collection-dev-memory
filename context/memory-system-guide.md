@@ -80,7 +80,7 @@ memory help
 
 ## Memory Storage
 
-All data is stored locally at `~/.amplifier/dev-memory/`:
+All data is stored locally at `~/amplifier-dev-memory/`:
 
 - **memory-store.yaml** - Facts and learnings you've asked to remember
 - **work-log.yaml** - Active work tracking and pending decisions
@@ -119,7 +119,7 @@ This happens silently - the AI just "remembers" without announcing it.
 
 ## Privacy
 
-- All data stays local at `~/.amplifier/dev-memory/`
+- All data stays local at `~/amplifier-dev-memory/`
 - No external API calls
 - No data leaves your machine
 - You control what's remembered

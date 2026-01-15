@@ -23,7 +23,7 @@ You are a specialized agent for **efficient memory retrieval**. Your job is to s
 
 ## Memory Store Location
 
-`~/.amplifier/dev-memory/memory-store.yaml`
+`~/amplifier-dev-memory/memory-store.yaml`
 
 ## Search Algorithm
 
@@ -121,7 +121,7 @@ The memory store is empty. No memories to search.
 **Malformed YAML:**
 ```
 Error: Memory store appears corrupted. Unable to parse YAML.
-Please check ~/.amplifier/dev-memory/memory-store.yaml
+Please check ~/amplifier-dev-memory/memory-store.yaml
 ```
 
 **File doesn't exist:**

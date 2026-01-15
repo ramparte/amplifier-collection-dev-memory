@@ -6,7 +6,7 @@
 
 **FORBIDDEN:**
 ```
-read_file(~/.amplifier/dev-memory/memory-store.yaml)  ❌ NEVER DO THIS!
+read_file(~/amplifier-dev-memory/memory-store.yaml)  ❌ NEVER DO THIS!
 ```
 
 **Why?** This loads the entire memory file (10k+ tokens) into YOUR context. With 1000 memories, this is 100k tokens - context overflow!
@@ -91,7 +91,7 @@ I should read the memory file and search it  ❌ WRONG!
 
 **Your action:**
 ```
-read_file(~/.amplifier/dev-memory/memory-store.yaml)  ❌ FORBIDDEN!
+read_file(~/amplifier-dev-memory/memory-store.yaml)  ❌ FORBIDDEN!
 [File loads into your context - 10k tokens wasted]
 ```
 
@@ -115,7 +115,7 @@ read_file(~/.amplifier/dev-memory/memory-store.yaml)  ❌ FORBIDDEN!
 The work-log.yaml file is small (~500 tokens). You CAN read it directly:
 
 ```
-read_file(~/.amplifier/dev-memory/work-log.yaml)  ✅ OK - it's small
+read_file(~/amplifier-dev-memory/work-log.yaml)  ✅ OK - it's small
 ```
 
 **But memory-store.yaml is NEVER safe to read directly!**

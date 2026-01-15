@@ -4,7 +4,7 @@ You are the main agent with instructions for **efficient memory operations**.
 
 ## ⚠️ CRITICAL RULE: Never Read Memory Files Directly
 
-**DO NOT use read_file on `~/.amplifier/dev-memory/memory-store.yaml`!**
+**DO NOT use read_file on `~/amplifier-dev-memory/memory-store.yaml`!**
 
 This loads 10k+ tokens into YOUR context. Always delegate reads to the sub-agent.
 
@@ -21,7 +21,7 @@ Handle memory operations using a **hybrid approach** for maximum token efficienc
 
 ## Memory System Location
 
-All memory files are at: `~/.amplifier/dev-memory/`
+All memory files are at: `~/amplifier-dev-memory/`
 
 ### Files
 - **memory-store.yaml** - Facts to remember (append-only)
@@ -43,7 +43,7 @@ All memory files are at: `~/.amplifier/dev-memory/`
 
 ```bash
 # 1. Get next ID (read just last few lines, not whole file)
-LAST_ID=$(grep -oP 'id: "mem-\K\d+' ~/.amplifier/dev-memory/memory-store.yaml | tail -1)
+LAST_ID=$(grep -oP 'id: "mem-\K\d+' ~/amplifier-dev-memory/memory-store.yaml | tail -1)
 NEXT_ID=$(printf "mem-%03d" $((10#${LAST_ID:-0} + 1)))
 
 # 2. Format new entry
@@ -52,7 +52,7 @@ CATEGORY="workflow"  # Auto-detect from content
 TAGS="workspace, preferences"  # Extract keywords
 
 # 3. Append (not edit entire file!)
-cat >> ~/.amplifier/dev-memory/memory-store.yaml <<EOF
+cat >> ~/amplifier-dev-memory/memory-store.yaml <<EOF
 
   - id: "$NEXT_ID"
     timestamp: "$TIMESTAMP"
@@ -108,7 +108,7 @@ I'll search the memory store for you.
 
 ```bash
 # Work log is small enough to read directly
-cat ~/.amplifier/dev-memory/work-log.yaml
+cat ~/amplifier-dev-memory/work-log.yaml
 ```
 
 Format and present:
@@ -172,7 +172,7 @@ memories:
 ```bash
 # Always append with proper indentation
 # Use 2-space indent for YAML array items
-cat >> ~/.amplifier/dev-memory/memory-store.yaml <<'EOF'
+cat >> ~/amplifier-dev-memory/memory-store.yaml <<'EOF'
 
   - id: "mem-XXX"
     timestamp: "YYYY-MM-DDTHH:MM:SSZ"
@@ -192,7 +192,7 @@ For work log updates, you CAN load the file (it's small):
 
 ```bash
 # Read current work log
-cat ~/.amplifier/dev-memory/work-log.yaml
+cat ~/amplifier-dev-memory/work-log.yaml
 
 # Edit specific sections using edit_file tool
 # Or append new work items
@@ -210,7 +210,7 @@ Work log is typically <500 tokens, safe to load.
   Category: {category}
   Tags: {tags}
 
-Stored in ~/.amplifier/dev-memory/memory-store.yaml
+Stored in ~/amplifier-dev-memory/memory-store.yaml
 ```
 
 **After retrieval (from sub-agent):**
@@ -251,7 +251,7 @@ Pending Decisions:
 **If append fails:**
 ```bash
 # Verify file exists
-if [ ! -f ~/.amplifier/dev-memory/memory-store.yaml ]; then
+if [ ! -f ~/amplifier-dev-memory/memory-store.yaml ]; then
   echo "Error: Memory store not initialized"
   echo "Creating new memory store..."
   # Initialize with header
@@ -300,7 +300,7 @@ Current Status:
 
 ## Privacy
 
-- All operations stay local at `~/.amplifier/dev-memory/`
+- All operations stay local at `~/amplifier-dev-memory/`
 - No external API calls
 - You control what's remembered
 - Files are human-readable and editable

@@ -19,7 +19,7 @@ That's it! The memory system is now available in **all amplifier sessions**, reg
 Create the memory directory:
 
 ```bash
-mkdir -p ~/.amplifier/dev-memory
+mkdir -p ~/amplifier-dev-memory
 ```
 
 The memory system will create the initial files on first use.
@@ -84,7 +84,7 @@ amplifier bundle update dev-memory
 amplifier bundle remove dev-memory
 
 # Optionally delete your memory files (WARNING: loses your memories!)
-rm -rf ~/.amplifier/dev-memory
+rm -rf ~/amplifier-dev-memory
 ```
 
 ---
@@ -110,10 +110,10 @@ amplifier bundle current  # Should show dev-memory
 
 Check if directory exists:
 ```bash
-ls -la ~/.amplifier/dev-memory/
+ls -la ~/amplifier-dev-memory/
 
 # Create if missing
-mkdir -p ~/.amplifier/dev-memory
+mkdir -p ~/amplifier-dev-memory
 ```
 
 ---

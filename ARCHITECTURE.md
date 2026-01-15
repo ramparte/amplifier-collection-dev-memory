@@ -18,11 +18,11 @@ Traditional approach: Load entire memory file for every operation
 
 ```bash
 # Get next ID (read last few lines only)
-LAST_ID=$(tail -20 ~/.amplifier/dev-memory/memory-store.yaml | grep -oP 'id: "mem-\K\d+' | tail -1)
+LAST_ID=$(tail -20 ~/amplifier-dev-memory/memory-store.yaml | grep -oP 'id: "mem-\K\d+' | tail -1)
 NEXT_ID=$(printf "mem-%03d" $((10#${LAST_ID:-0} + 1)))
 
 # Append new entry
-cat >> ~/.amplifier/dev-memory/memory-store.yaml <<EOF
+cat >> ~/amplifier-dev-memory/memory-store.yaml <<EOF
 
   - id: "$NEXT_ID"
     timestamp: "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
@@ -78,7 +78,7 @@ User: "remember this: X"
 Main Agent (writes directly)
   ↓ append operation (~100 tokens)
   ↓
-~/.amplifier/dev-memory/memory-store.yaml
+~/amplifier-dev-memory/memory-store.yaml
   ✓ Written efficiently
 
 
@@ -155,7 +155,7 @@ Sub-agent tokens = Isolated, cleared after task
 ## File Structure
 
 ```
-~/.amplifier/dev-memory/
+~/amplifier-dev-memory/
 ├── memory-store.yaml       # Growing file (1k-100k+ tokens)
 │                          # Written: append-only by main agent
 │                          # Read: by memory-retrieval sub-agent

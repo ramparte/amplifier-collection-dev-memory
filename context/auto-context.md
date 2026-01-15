@@ -18,7 +18,7 @@ Use task tool to invoke: dev-memory:memory-retrieval
 Instruction: "Search memory store for: [query]"
 ```
 
-**DO NOT use read_file on ~/.amplifier/dev-memory/memory-store.yaml directly!**
+**DO NOT use read_file on ~/amplifier-dev-memory/memory-store.yaml directly!**
 
 This loads the entire file into YOUR context (10k+ tokens). The sub-agent absorbs this cost and returns only matches (~200 tokens).
 
@@ -64,15 +64,15 @@ remind me how the memory system works
 The memory-partner agent:
 1. Loads recent memories at session start (silent)
 2. Recognizes natural language patterns
-3. Reads/writes memory files at `~/.amplifier/dev-memory/`
+3. Reads/writes memory files at `~/amplifier-dev-memory/`
 4. Maintains work log and project notes
 
 ### Memory Files
 
-- `~/.amplifier/dev-memory/memory-store.yaml` - Facts to remember
-- `~/.amplifier/dev-memory/work-log.yaml` - Active work tracking
-- `~/.amplifier/dev-memory/project-notes.md` - Free-form notes
-- `~/.amplifier/dev-memory/README.md` - Full guide
+- `~/amplifier-dev-memory/memory-store.yaml` - Facts to remember
+- `~/amplifier-dev-memory/work-log.yaml` - Active work tracking
+- `~/amplifier-dev-memory/project-notes.md` - Free-form notes
+- `~/amplifier-dev-memory/README.md` - Full guide
 
 ### Categories
 

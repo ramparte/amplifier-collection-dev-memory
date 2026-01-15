@@ -47,7 +47,7 @@ remind me how the memory system works
 
 ## Where Data Lives
 
-All memory files are at `~/.amplifier/dev-memory/`:
+All memory files are at `~/amplifier-dev-memory/`:
 
 - `memory-store.yaml` - Facts you've asked to remember
 - `work-log.yaml` - Active work and pending decisions
