@@ -76,7 +76,9 @@ Layer 2 - SESSION TRANSCRIPTS (never loaded, only searched)
 │   └── ...
 ├── .meta/                              # Housekeeping (never loaded by retrieval)
 │   ├── writes-since-consolidation      # Counter file (just a number)
-│   └── consolidation-log.md           # Audit trail of what consolidation did
+│   ├── consolidation-log.md           # Audit trail of what consolidation did
+│   ├── consolidation-health.json      # Last run status, metrics, test results
+│   └── retrieval-test.yaml            # Smoke test queries with expected results
 └── .gitignore                          # Optional: if the dir is a git repo
 ```
 
@@ -87,10 +89,10 @@ Layer 2 - SESSION TRANSCRIPTS (never loaded, only searched)
 When the user says "remember this: X":
 
 1. **Read index** -- Main agent reads MEMORY.md (~200 lines, cheap).
-2. **Decide placement** -- Does X fit an existing topic? Which one? Or does X need a new topic file?
-3. **Write to topic file** -- Append the new entry to `topics/<topic-name>.md`. Entry format: timestamp + content (markdown, not YAML).
+2. **Decide placement + contradiction check** -- Does X fit an existing topic? Which one? Or does X need a new topic file? Before storing, the agent also checks: does this new memory directly contradict any existing index line? If a conflict is detected (e.g., new memory says "We chose Auth0" but an index line references "chose Clerk"), present the conflict to the user: "This appears to contradict an existing memory about [topic]. Store anyway, or update the existing entry?" This check is O(index size) -- the index is already in context, so it adds zero extra IO.
+3. **Write to topic file** -- Append the new entry to `topics/<topic-name>.md`. Entry format: timestamp + content + optional temporal tag. Entries that reference a current state get a `[temporal:YYYY-MM-DD]` tag (e.g., "Kai is working on Project Orion [temporal:2026-04-07]", "The deploy deadline is April 15 [temporal:2026-04-15]"). Entries that are persistent facts get a `[persistent]` tag or no tag (e.g., "Prefer PostgreSQL for new projects"). The temporal tag is the date the fact was recorded; it tells the consolidation agent when to start questioning whether the fact is still true.
 4. **Update index** -- If existing topic: rewrite that index line to reflect new content. If new topic: append a new index line + file pointer.
-5. **Check consolidation threshold** -- Read `.meta/writes-since-consolidation`, increment it. If counter > 10: trigger consolidation (spawn sub-agent). If not: done.
+5. **Check consolidation threshold + health** -- Read `.meta/writes-since-consolidation`, increment it. Also read `.meta/consolidation-health.json` if it exists. Warn the user if: (a) `last_run` is more than 7 days old AND the write counter exceeds threshold, (b) `status` is not "success", or (c) `retrieval_test_results.failed` > 0 ("retrieval quality degraded after last consolidation"). If counter > 10: trigger consolidation (spawn sub-agent). If not: done.
 
 **Design choices:**
 
@@ -119,27 +121,43 @@ When the user says "remember this: X":
 1. **Load** -- Read MEMORY.md (index) and all referenced topic files.
 2. **Merge** -- Within each topic file, merge entries that say the same thing differently. "I prefer Postgres" + "Use PostgreSQL for new projects" becomes one entry.
 3. **Deduplicate across topics** -- If two topic files cover overlapping ground, merge the smaller into the larger and delete the empty file.
-4. **Prune stale** -- Delete entries that are vague, temporal ("I'm currently working on X"), or derivable from code. Convert "I think the config is at..." to either the absolute path or delete it.
+4. **Prune stale** -- Delete entries that are vague, derivable from code, or temporally expired. Specifically: entries tagged `[temporal:DATE]` where DATE is more than 60 days old are investigated ("is this still current?"). Entries with a specific deadline date that has passed are pruned or flagged. Entries where staleness is uncertain get a `[stale?]` tag -- the retrieval agent will note the uncertainty when returning these entries. Convert "I think the config is at..." to either the absolute path or delete it.
 5. **Resolve contradictions** -- If two entries contradict each other, keep the newer one. If unclear, keep neither and flag it in `.meta/consolidation-log.md`.
-6. **Rewrite index** -- Regenerate MEMORY.md from the consolidated topic files. Each line is a fresh one-liner summary of that topic file's current content.
-7. **Enforce cap** -- If the index still exceeds 200 lines after consolidation, force-prune the lowest-value topics (oldest, least specific, most derivable).
-8. **Reset counter** -- Zero out `.meta/writes-since-consolidation`.
-9. **Log** -- Append a summary to `.meta/consolidation-log.md` (what was merged, pruned, flagged).
+6. **Derive cross-references** -- After reading all topic files, identify topics that reference shared entities or concepts. Add `see-also:` lines to the index for topics that are structurally related but stored separately. (Example: if dgx-cluster-setup and amplifier-architecture both reference NFS mounts, add a cross-reference.) Remove stale cross-references that no longer apply.
+7. **Rewrite index** -- Regenerate MEMORY.md from the consolidated topic files. Each line is a fresh one-liner summary of that topic file's current content, with `see-also:` cross-references where applicable.
+8. **Enforce cap** -- If the index still exceeds 200 lines after consolidation, force-prune the lowest-value topics (oldest, least specific, most derivable).
+9. **Run retrieval smoke tests** -- Execute queries from `.meta/retrieval-test.yaml` against the updated index and topic files. For each test query, verify that the expected topics are returned. Log pass/fail results.
+10. **Reset counter** -- Zero out `.meta/writes-since-consolidation`.
+11. **Write health file** -- Write `.meta/consolidation-health.json` with: `last_run` timestamp, `status` (success/failure), `index_lines_before`/`index_lines_after`, `topics_merged`, `topics_pruned`, `contradictions_found`, and `retrieval_test_results` (passed/failed counts and failure details).
+12. **Log** -- Append a summary to `.meta/consolidation-log.md` (what was merged, pruned, flagged, cross-referenced, and retrieval test results).
 
 **Key principle:** Memory is continuously edited, not appended. The consolidation agent rewrites topic files in place. Old versions are gone. If you need history, that's what git is for.
 
+### Git Safety Net for Consolidation
+
+**Recommended practice** (not a hard requirement): If `~/amplifier-dev-memory/` is a git repo, the consolidation agent should commit a snapshot before starting and after completing. This provides:
+
+- **Reversibility** -- If consolidation damages data, `git diff` shows exactly what changed and `git revert` restores it.
+- **Audit trail** -- The git log becomes a history of how the memory store evolved over time, complementing `.meta/consolidation-log.md`.
+- **Corruption recovery** -- If the consolidation agent crashes mid-rewrite, the working tree has partially rewritten files. With git, `git checkout .` restores the last known-good state.
+
+The consolidation agent's workflow becomes: `git commit -am "pre-consolidation snapshot"` -> do all consolidation work -> `git commit -am "post-consolidation: merged N, pruned M"`. If the agent crashes between commits, the pre-consolidation commit is the recovery point.
+
 ### The Read Path (Retrieval)
 
-**Stage 1: Index scan (always)**
+**Stage 1: Search (always)**
 
-- The retrieval agent reads MEMORY.md (~200 lines, cheap)
-- Uses LLM judgment to identify which index lines are relevant to the query
-- Replaces keyword matching -- the LLM can understand semantic relevance
+- The retrieval agent calls the memory-search capability with the user's query
+- Today, this capability reads MEMORY.md (~200 lines) and uses LLM judgment to identify relevant index lines. The retrieval agent does not know or care about the search implementation -- it receives a list of relevant topic file paths.
+- This abstraction is the **vector search seam**: tomorrow, the search capability could query an embedding index instead of scanning the full index with LLM judgment. The retrieval agent's instructions say "use the search tool" not "read MEMORY.md directly." The implementation can be swapped without rewriting the retrieval agent.
+- When to add vector search: when the retrieval smoke test (see below) shows retrieval misses at scale (~50+ topic files). Not before.
 
 **Stage 2: Topic file fetch (on-demand)**
 
 - For each relevant index line, the agent reads the referenced topic file
+- Also reads topic files for any `see-also:` cross-references on the matched index lines
 - Extracts the specific entries that answer the query
+- Entries tagged `[stale?]` are returned with an explicit uncertainty note
 - Returns a concise summary to the main session (~200 tokens)
 
 **Stage 3: Transcript search (rare, only when needed)**
@@ -147,7 +165,31 @@ When the user says "remember this: X":
 - If the query references something that might be in session history but not in memory, the retrieval agent can delegate to `session-analyst` to search transcripts
 - This is Layer 2 -- never automatic, only when Layers 0 and 1 don't have the answer
 
-**Key design choice:** Retrieval is skeptical, not blind. Memories are *hints*, not truth. The retrieval agent returns memories with the caveat that the main agent should verify against current reality before acting on them. Memories older than 30 days get a staleness warning. This is enforced in the retrieval agent's instructions: "Present memories as potentially stale hints. Flag any memory older than 30 days with a staleness warning."
+**Key design choice:** Retrieval is skeptical, not blind. Memories are *hints*, not truth. The retrieval agent returns memories with the caveat that the main agent should verify against current reality before acting on them. Entries tagged `[temporal:DATE]` where the date is old get a staleness warning. Entries tagged `[stale?]` get an explicit uncertainty note. This is enforced in the retrieval agent's instructions: "Present memories as potentially stale hints. Flag any temporal memory older than 60 days or any `[stale?]` entry with a staleness warning."
+
+### Retrieval Smoke Test
+
+A regression test suite at `.meta/retrieval-test.yaml` validates that the retrieval path returns expected results for known queries. Format:
+
+```yaml
+tests:
+  - query: "what database do I prefer?"
+    expected_topics: ["workspace-preferences"]
+    expected_keywords: ["PostgreSQL"]
+
+  - query: "how is the DGX cluster set up?"
+    expected_topics: ["dgx-cluster-setup"]
+
+  - query: "who owns the provider modules?"
+    expected_topics: ["team-org"]
+    expected_keywords: ["Salil"]
+```
+
+**When it runs:** The consolidation agent executes these tests after every consolidation run (step 9). For each test query, it runs the retrieval path against the updated index and topic files and verifies the expected topics are returned. Pass/fail results are recorded in `.meta/consolidation-health.json`.
+
+**What it catches:** Consolidation breaking retrieval (merged a topic that shouldn't have been merged), index rewriting losing important signal, and gradual retrieval quality degradation.
+
+**Bootstrapping:** Start with 10-15 tests seeded from real queries after the V1-to-V2 migration. Add more as retrieval failures are discovered in real use. The test file is human-editable and committed alongside the memory store.
 
 ## Data Flow
 
@@ -265,21 +307,36 @@ This is a one-time operation run as the first step of the V2 rollout.
 
 - Prefers PostgreSQL, clean workspaces, Inactive/ folder convention → topics/workspace-preferences.md
 - DGX Spark: spark-1 (.10), spark-2 (.11), NFS /mnt/shared, Ubuntu 22.04 → topics/dgx-cluster-setup.md
+  see-also: amplifier-architecture, team-org
 - Amplifier: single-namespace memory, filesystem-pure, index+topics → topics/amplifier-architecture.md
+  see-also: dgx-cluster-setup
 - Team: Sam (ramparte), Salil (robotdad), org structure → topics/team-org.md
+  see-also: dgx-cluster-setup
 ```
+
+Cross-references (`see-also:` lines) are maintained by the consolidation agent, not the write path. They are derived automatically during consolidation step 6 by identifying topics that reference shared entities or concepts. The retrieval agent follows cross-references when fetching topic files (read path stage 2).
 
 ### Topic File (topics/workspace-preferences.md)
 
 ```markdown
 # Workspace Preferences
 
-- Prefers PostgreSQL for all new projects [2026-01-15]
-- Uses Inactive/ folders to archive old work without deleting [2026-01-20]
-- Clean workspaces: no stale branches, no orphan files [2026-02-03]
-- Tab preference: 2-space indent for YAML, 4-space for Python [2026-03-10]
+- Prefers PostgreSQL for all new projects [2026-01-15] [persistent]
+- Uses Inactive/ folders to archive old work without deleting [2026-01-20] [persistent]
+- Clean workspaces: no stale branches, no orphan files [2026-02-03] [persistent]
+- Tab preference: 2-space indent for YAML, 4-space for Python [2026-03-10] [persistent]
+- Kai is working on Project Orion [temporal:2026-04-07]
+- The deploy deadline is April 15 [temporal:2026-04-15]
 ```
+
+Entries tagged `[persistent]` are stable facts that don't expire on a calendar. Entries tagged `[temporal:DATE]` reference a current state that may change -- the consolidation agent investigates these when the date is more than 60 days old. Entries where staleness can't be determined get a `[stale?]` tag during consolidation; the retrieval agent flags these with an uncertainty note when returning them.
 
 ## Open Questions
 
-None -- all design questions were resolved during the brainstorming phase. Implementation details (exact prompt wording for agents, threshold tuning, topic naming conventions) will be determined during implementation.
+1. **What happens when index + consolidation can't compress below 200 lines?** The 200-line cap is policy, not architecture. If the user generates 3 new topics per week, the index hits 200 in ~15 months. Consolidation can merge and prune, but can't invent compression that doesn't exist. The spec should define an escape hatch: raise the cap, split into sub-indexes (e.g., by domain), or activate the vector search seam. Recommended: rank these options and define the trigger condition for escalation.
+
+2. **How does the write path handle concurrent sessions?** Two Amplifier sessions running simultaneously can both write to memory. File-level locking, last-write-wins, or advisory locking via `.meta/write-lock`? This isn't hypothetical -- users tab-switch between terminal windows. At minimum, the write path should check for a lock file before writing and warn if another session is mid-write.
+
+3. **What's the consolidation agent's failure mode?** If the consolidation agent crashes mid-rewrite (e.g., LLM context limit, network failure, Amplifier session timeout), topic files may be partially rewritten. The git safety net (pre-consolidation commit) mitigates this, but the spec should describe the expected recovery behavior: detect the incomplete consolidation (e.g., missing `.meta/consolidation-health.json` update), warn the user, and offer to roll back via git.
+
+4. **How do you bootstrap the retrieval smoke test?** The first 10 memories won't have meaningful test coverage. When does the test suite become useful? Recommended: the migration agent (step 7) seeds `.meta/retrieval-test.yaml` with 10-15 test queries derived from the migrated V1 data. Additional tests are added manually as retrieval failures are discovered in real use.
