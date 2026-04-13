@@ -1,7 +1,7 @@
 bundle:
   name: dev-memory-behavior
-  version: 1.0.0
-  description: Persistent memory system for maintaining development context across sessions
+  version: 2.0.0
+  description: Persistent memory system — compact context (~500 tokens vs ~7K in v1)
 
 agents:
   include:
@@ -9,7 +9,4 @@ agents:
 
 context:
   include:
-    - dev-memory:context/DELEGATION-RULES.md
-    - dev-memory:context/auto-context.md
-    - dev-memory:context/memory-writer-instructions.md
-    - dev-memory:context/memory-system-guide.md
+    - dev-memory:context/memory-instructions.md

@@ -49,10 +49,6 @@ All data is stored locally at `~/amplifier-dev-memory/`:
 - `work-log.yaml` - Active work tracking
 - `project-notes.md` - Free-form notes
 
-## Instructions
-
-@dev-memory:context/memory-system-guide.md
-
 ---
 
 @foundation:context/shared/common-system-base.md
